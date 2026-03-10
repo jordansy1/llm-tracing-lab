@@ -1,0 +1,212 @@
+[
+  {
+    "alert": {
+      "id": "alert-001",
+      "timestamp": "2026-03-10T08:15:00Z",
+      "source": "email_gateway",
+      "raw_text": "User clicked link in email from spoofed-hr@company-benefits.xyz claiming to require immediate password reset. Link redirects to credential harvesting page mimicking company SSO portal.",
+      "metadata": {"sender": "spoofed-hr@company-benefits.xyz", "user": "jsmith@company.com"}
+    },
+    "expected": {
+      "severity": "high",
+      "category": "phishing",
+      "reasoning": "Spoofed sender with credential harvesting link targeting employee via fake SSO portal"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-007",
+      "timestamp": "2026-03-10T12:10:00Z",
+      "source": "email_gateway",
+      "raw_text": "Bulk phishing campaign detected: 200+ employees received identical email impersonating IT department requesting MFA token reset via malicious link.",
+      "metadata": {"recipients_count": 215, "sender": "it-support@company-secure.net"}
+    },
+    "expected": {
+      "severity": "critical",
+      "category": "phishing",
+      "reasoning": "Large-scale phishing campaign targeting 200+ employees with MFA bypass attempt"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-013",
+      "timestamp": "2026-03-10T14:40:00Z",
+      "source": "email_gateway",
+      "raw_text": "CEO impersonation email sent to CFO requesting urgent wire transfer of $285,000 to new vendor account. Email passed SPF but failed DKIM. Reply-to address differs from sender.",
+      "metadata": {"impersonated": "ceo@company.com", "target": "cfo@company.com", "amount": 285000}
+    },
+    "expected": {
+      "severity": "critical",
+      "category": "phishing",
+      "reasoning": "Business email compromise targeting CFO with fraudulent wire transfer request impersonating CEO"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-002",
+      "timestamp": "2026-03-10T09:22:00Z",
+      "source": "firewall",
+      "raw_text": "47 failed SSH login attempts from IP 198.51.100.23 targeting root account over 12-minute window. IP geolocated to known VPS hosting provider.",
+      "metadata": {"ip": "198.51.100.23", "attempts": 47, "target_user": "root"}
+    },
+    "expected": {
+      "severity": "medium",
+      "category": "brute_force",
+      "reasoning": "Moderate-volume SSH brute force from VPS targeting root account"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-008",
+      "timestamp": "2026-03-10T12:35:00Z",
+      "source": "waf",
+      "raw_text": "Automated credential stuffing attack against customer login portal. 12,000 unique username/password combinations attempted from rotating proxy IPs in 30-minute window.",
+      "metadata": {"attempts": 12000, "unique_ips": 847, "target": "login.company.com"}
+    },
+    "expected": {
+      "severity": "high",
+      "category": "brute_force",
+      "reasoning": "Large-scale credential stuffing with 12K attempts from rotating proxies targeting customer portal"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-003",
+      "timestamp": "2026-03-10T10:05:00Z",
+      "source": "dlp",
+      "raw_text": "Employee uploaded 340MB archive containing customer PII to personal Google Drive. File includes SSN and credit card fields from CRM export.",
+      "metadata": {"user": "mwilson@company.com", "file_size_mb": 340, "destination": "personal_gdrive"}
+    },
+    "expected": {
+      "severity": "critical",
+      "category": "data_exfiltration",
+      "reasoning": "Large-volume PII exfiltration including SSN and credit card data to personal cloud storage"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-009",
+      "timestamp": "2026-03-10T13:00:00Z",
+      "source": "cloud_audit",
+      "raw_text": "Unusual S3 bucket access: 2.1GB of customer data downloaded via API from IP not associated with any known employee or service. Bucket contains billing records.",
+      "metadata": {"ip": "203.0.113.99", "bucket": "prod-billing-data", "download_gb": 2.1}
+    },
+    "expected": {
+      "severity": "critical",
+      "category": "data_exfiltration",
+      "reasoning": "Unauthorized bulk download of customer billing data from unknown IP address"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-019",
+      "timestamp": "2026-03-10T17:10:00Z",
+      "source": "cloud_audit",
+      "raw_text": "DNS exfiltration detected: workstation making thousands of DNS queries to subdomain.evil-dns.com with encoded data in subdomain labels. Queries average 200 bytes of data each.",
+      "metadata": {"hostname": "WS-LEGAL-07", "domain": "evil-dns.com", "queries": 3400}
+    },
+    "expected": {
+      "severity": "high",
+      "category": "data_exfiltration",
+      "reasoning": "Active DNS tunneling exfiltration channel with encoded data to known malicious domain"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-004",
+      "timestamp": "2026-03-10T10:30:00Z",
+      "source": "google_workspace",
+      "raw_text": "Service account credentials found in public GitHub repository. Account has read access to production Cloud SQL database containing customer records.",
+      "metadata": {"repo": "github.com/dev-team/infra-scripts", "service_account": "sa-readonly@proj.iam"}
+    },
+    "expected": {
+      "severity": "critical",
+      "category": "credential_abuse",
+      "reasoning": "Exposed service account credentials with production database access in public repository"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-010",
+      "timestamp": "2026-03-10T13:20:00Z",
+      "source": "google_workspace",
+      "raw_text": "Admin account logged in from two countries within 15 minutes: New York (US) and Lagos (NG). Impossible travel detected. Session from Lagos changed 3 user permissions.",
+      "metadata": {"user": "admin@company.com", "locations": ["US-NY", "NG-LA"], "time_gap_min": 15}
+    },
+    "expected": {
+      "severity": "critical",
+      "category": "credential_abuse",
+      "reasoning": "Impossible travel on admin account with permission changes from suspicious location"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-005",
+      "timestamp": "2026-03-10T11:00:00Z",
+      "source": "hr_system",
+      "raw_text": "Employee on performance improvement plan accessed confidential M&A documents and board meeting minutes 47 times in past 24 hours, outside normal access patterns.",
+      "metadata": {"user": "rjones@company.com", "accesses": 47, "docs_type": "confidential_ma"}
+    },
+    "expected": {
+      "severity": "high",
+      "category": "insider_threat",
+      "reasoning": "At-risk employee exhibiting anomalous access to highly sensitive M&A documents"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-011",
+      "timestamp": "2026-03-10T13:50:00Z",
+      "source": "hr_system",
+      "raw_text": "Recently terminated employee's VPN credentials used to access internal file server 6 hours after account should have been disabled. Downloaded engineering design documents.",
+      "metadata": {"user": "tchen@company.com", "termination_date": "2026-03-10", "files_accessed": 23}
+    },
+    "expected": {
+      "severity": "critical",
+      "category": "insider_threat",
+      "reasoning": "Terminated employee accessing systems post-termination and downloading proprietary documents"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-006",
+      "timestamp": "2026-03-10T11:45:00Z",
+      "source": "endpoint",
+      "raw_text": "Executable dropper detected on workstation. Process spawned PowerShell with encoded command downloading payload from known C2 domain evil-update.xyz.",
+      "metadata": {"hostname": "WS-FINANCE-04", "c2_domain": "evil-update.xyz", "user": "agarcia@company.com"}
+    },
+    "expected": {
+      "severity": "critical",
+      "category": "malware",
+      "reasoning": "Active malware dropper with C2 communication and payload download on finance workstation"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-012",
+      "timestamp": "2026-03-10T14:15:00Z",
+      "source": "endpoint",
+      "raw_text": "Ransomware behavior detected: rapid file encryption across network shares. 450 files encrypted with .locked extension in 3 minutes. Process originated from email attachment.",
+      "metadata": {"hostname": "WS-ACCT-12", "files_encrypted": 450, "extension": ".locked"}
+    },
+    "expected": {
+      "severity": "critical",
+      "category": "malware",
+      "reasoning": "Active ransomware encrypting network shares, immediate containment required"
+    }
+  },
+  {
+    "alert": {
+      "id": "alert-017",
+      "timestamp": "2026-03-10T16:20:00Z",
+      "source": "endpoint",
+      "raw_text": "Cryptominer process detected on development server. CPU usage spiked to 95% running xmrig binary. Process was installed via compromised npm package in CI pipeline.",
+      "metadata": {"hostname": "DEV-BUILD-02", "process": "xmrig", "cpu_pct": 95}
+    },
+    "expected": {
+      "severity": "high",
+      "category": "malware",
+      "reasoning": "Cryptominer installed via supply chain compromise in CI pipeline npm package"
+    }
+  }
+]
