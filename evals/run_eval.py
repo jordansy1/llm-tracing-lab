@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from langsmith import Client, evaluate
+from langsmith.utils import LangSmithConflictError
 
 from src.classifier import classify_alert
 from src.models import SecurityAlert, Classification
@@ -42,18 +43,22 @@ def upload_dataset(examples: list[dict], dataset_name: str) -> str:
     """
     client = Client()
 
-    # Create or get existing dataset
-    dataset = client.create_dataset(
-        dataset_name=dataset_name,
-        description="Security alert triage golden set",
-    )
+    # Create or reuse existing dataset
+    try:
+        dataset = client.create_dataset(
+            dataset_name=dataset_name,
+            description="Security alert triage golden set",
+        )
+        # New dataset — upload examples
+        client.create_examples(
+            inputs=[e["inputs"] for e in examples],
+            outputs=[e["outputs"] for e in examples],
+            dataset_id=dataset.id,
+        )
+    except LangSmithConflictError:
+        # Dataset already exists — reuse it
+        dataset = client.read_dataset(dataset_name=dataset_name)
 
-    # Upload examples
-    client.create_examples(
-        inputs=[e["inputs"] for e in examples],
-        outputs=[e["outputs"] for e in examples],
-        dataset_id=dataset.id,
-    )
     return dataset_name
 
 

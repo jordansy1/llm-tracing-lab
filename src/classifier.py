@@ -1,4 +1,5 @@
 import json
+import re
 
 import anthropic
 from langsmith import traceable
@@ -52,8 +53,18 @@ def classify_alert(
         raise RuntimeError(f"Anthropic API call failed: {e}") from e
 
     raw_text = response.content[0].text
+
+    # Strip markdown code fences if Claude wraps the JSON
+    cleaned = raw_text.strip()
+    fence_match = re.search(r"```(?:json)?\s*\n?(.*?)```", cleaned, re.DOTALL)
+    if fence_match:
+        cleaned = fence_match.group(1).strip()
+
     try:
-        data = json.loads(raw_text)
+        data = json.loads(cleaned)
         return Classification(**data)
     except (json.JSONDecodeError, ValueError) as e:
-        raise ValueError(f"Failed to parse classification from Claude response: {e}")
+        raise ValueError(
+            f"Failed to parse classification from Claude response: {e}\n"
+            f"Raw response: {raw_text!r}"
+        )
